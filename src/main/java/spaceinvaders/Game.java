@@ -108,8 +108,7 @@ public class Game extends Canvas {
 		ExecutorService executorService = Executors.newSingleThreadExecutor();
 		BackgroundMusic bgm = new BackgroundMusic("src/main/resources/audio/backgroundmusic.wav", executorService);
 		executorService.execute(bgm);
-		if (option.equals("2p")) {multiPlay = true; System.out.println("2p");}
-		else {multiPlay = false; System.out.println("1p");}
+		if (option.equals("2p")) {multiPlay = true; System.out.println("2p");} else {multiPlay = false; System.out.println("1p");}
 		gameTimer = new GameTimer();
 		// create a frame to contain our game
 		container = new JFrame("Space Invaders 102");
@@ -117,7 +116,6 @@ public class Game extends Canvas {
 		JPanel panel = (JPanel) container.getContentPane();
 		panel.setPreferredSize(new Dimension(800,600));
 		panel.setLayout(null);
-
 
 
 		JButton home = new JButton("HOME");
@@ -133,7 +131,6 @@ public class Game extends Canvas {
 				bgm.stop();
 				container.dispose();
 			}
-
 
 
 		});
@@ -217,6 +214,7 @@ public class Game extends Canvas {
 		home.setBackground(Color.WHITE);
 
 	}
+
 	private void initEntities() {
 		if (multiPlay){
 			ShipCounter[0] = new ShipEntity(this, "sprites/ship1p.png",350, 550, defaultPlayerLife,false);
@@ -291,13 +289,14 @@ public class Game extends Canvas {
 		// reduce the alient count, if there are none left, the player has won!
 		addKillCount();
 		subLiveCount();
+		if(killCount%5==0&&AlienEntity.getAlienHMovement()>74)doMeteor();
 		System.out.println("kill :"+getKillCount()+" live : "+getLiveCount()+" alien : "+alienCount);
 		playBoard.scoreModeAdd(score);
-		itemDrop(other.getX(), other.getY());
 		System.out.println(getKillCount());
 		if (getLevel() == 2&& getKillCount()%2 == 0 && getKillCount() != 0) {
 			level2shot();
 		}
+		if(getKillCount()%5==0&&getKillCount()!=0)itemDrop(other.getX(),other.getY());
 		if(getLiveCount()==0&&gameTimer.getTask(genTask)==null)notifyWin();
 	}
 
@@ -568,9 +567,7 @@ public class Game extends Canvas {
 	}
 
 	public void itemDrop(int x, int y){
-		if (getKillCount()%3 == 0 && getKillCount()/3 >= 1){
-			addEntity(new ItemEntity(this,x,y));
-		}
+		addEntity(new ItemEntity(this,x,y));
 	}
 
 	/**
@@ -585,6 +582,7 @@ public class Game extends Canvas {
 
 	/** This can help you to access entities.add() in other class */
 	public void addEntity(Entity entity){ entities.add(entity); }
+
 	public int getLevel(){return level;}
 
 	public void addTask(TimerTask task,long delay,long period){
@@ -607,8 +605,7 @@ public class Game extends Canvas {
 			BossEntity boss = new BossEntity(this, 370, 50,defaultBossLife);
 			addEntity(boss);
 			addLiveCount();
-		}
-		else {
+		} else {
 			alienCount = 10 + (level - 1) * 2;
 			Entity[] alien = new Entity[alienCount];
 			ptIdx = 0;
@@ -644,6 +641,7 @@ public class Game extends Canvas {
 			}
 			genTask = new TimerTask() {
 				int tmpIdx = 0;
+
 				@Override
 				public void run() {
 					System.out.println("level " + level + "sponed : " + ((tmpIdx) + 1));
@@ -658,13 +656,40 @@ public class Game extends Canvas {
 			gameTimer.addTask(genTask, 0, 1000);
 		}
 	}
+
 	public void addLiveCount(){liveCount++;}
+
 	public void subLiveCount(){liveCount--;}
+
 	public void setLiveCount(int set){liveCount = set;}
+
 	public int getLiveCount(){return liveCount;}
+
 	public void addKillCount(){killCount++;}
+
 	public void setKillCount(int set){killCount = set;}
+
 	public int getKillCount(){return killCount;}
+
+	public boolean isMulti(){return multiPlay;}
+
+	public Entity get1P(){return ShipCounter[0];}
+
+	public Entity get2P(){
+		if(!isMulti())return null;
+		else return ShipCounter[1];
+	}
+
+	public void doMeteor(){
+		int half;
+		if (!isMulti()) half = 2;
+		else half = 1;
+		for(int i = 0; i<20/half; i++){
+			if(!isMulti()) addEntity(new MeteorEntity(this,2*i));
+			else addEntity(new MeteorEntity(this,i));
+		}
+	}
+
 	public void updateLogic() {
 		logicRequiredThisLoop = true;
 	}

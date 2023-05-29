@@ -2,6 +2,8 @@ package spaceinvaders.entity;
 
 import spaceinvaders.Game;
 import spaceinvaders.ItemSlotMachine;
+import spaceinvaders.entity.MeteorEntity;
+
 import java.util.TimerTask;
 
 /**
@@ -156,6 +158,17 @@ public class ShipEntity extends Entity {
 			game.removeEntity(this);
 
 		} else if (other instanceof AttackEntity) {
+			if (getLife() > 1) {
+				LifeDecrease();
+				game.removeEntity(other);
+			} else if (getLife() == 1) {
+				LifeDecrease();
+				if (is2P()) game.notifyDeath(2);
+				else game.notifyDeath(1);
+				game.removeEntity(this);
+			}
+		}
+		else if (other instanceof MeteorEntity) {
 			if (getLife() > 1) {
 				LifeDecrease();
 				game.removeEntity(other);

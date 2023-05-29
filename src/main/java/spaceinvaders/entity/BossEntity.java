@@ -107,6 +107,7 @@ public class BossEntity extends Entity {
     public void collidedWith(Entity other) {
         // if we've hit an alien, kill it!
         if (other instanceof ShotEntity){
+            if(bossLifes.getEntityLife()%10==0)game.itemDrop(this.getX(),this.getY());
             if (bossLifes.getEntityLife()%7 == 0) {
                 int x = this.getX() + 10; // 초기 x 좌표 설정
                 int y = this.getY() + 10; // 초기 y 좌표 설정

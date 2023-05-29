@@ -34,13 +34,13 @@ public class ItemSlotMachine {
                 break;
             case 1://Ship Accelation
                 if(ship.isAffected())return;
-                ship.setEffected(true);
+                ship.setAffected(true);
                 ship.accelation();
                 System.out.println("Accel");
                 break;
             case 2://Ship keyReverse
                 if(ship.isAffected())return;
-                ship.setEffected(true);
+                ship.setAffected(true);
                 ship.keyReverse();
                 System.out.println("Reverse");
                 break;
@@ -54,7 +54,7 @@ public class ItemSlotMachine {
             public void run() {
                 long durationTime = SystemTimer.getTime();
                 if(durationTime-startTime>5000){
-                    ship.setEffected(false);
+                    ship.setAffected(false);
                     game.removeEntity(display);
                     game.removeTask(showTask);
                 }
